@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link href="https://cdn.jsdelivr.net/npm/reset-css@5.0.1/reset.min.css" rel="stylesheet">
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        .container {
+            font-size: 2em;
+            height: 100vh;
+            position: relative;
+            background-image: linear-gradient(to right bottom, #c9d1de, #cddbe8, #d1e5f1, #d5eff8, #daf9ff);
+            font-family: "JetBrains Sans", Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Droid Sans", "Helvetica Neue", Arial, sans-serif;
+        }
+
+        .center {
+            margin: 0;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            -ms-transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%);
+        }
+
+        .inner {
+            position: relative;
+        }
+
+        #time {
+            font-size: 3em;
+        }
+
+        #face {
+            perspective: 1000px;
+            position: absolute;
+            left: 100%;
+            top: 40%;
+            display: inline-block;
+            padding: 0;
+            transition: transform 0.5s;
+            transform-origin: 50% 0;
+            transform-style: preserve-3d;
+            margin-left: 3em;
+        }
+
+        #face:before {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            content: attr(data-hover);
+            transition: color 0.3s;
+            transform: rotateX(-90deg);
+            transform-origin: 50% 0;
+        }
+
+        #face, #face:before {
+            min-width: 6em;
+            text-align: center;
+        }
+
+        .toggle-anim {
+            transform: rotateX(90deg) translateY(-22px);
+        }
+
+    </style>
+
+    <script>
+        const faces = [
+            "°՞(ᗒᗣᗕ)՞°",
+            "(◞‸ ◟ ；)",
+            "(っ◞‸◟ c)",
+            "ꃋᴖꃋ",
+            "( ͒˃̩̩⌂˂̩̩ ͒)",
+            "(T⌓T)",
+            "(っ- ‸ -)っ",
+            "ヽ( ´ー`)ノ",
+            "ᵕ_ᵕ̩̩ ",
+            "(⌣́_⌣̀)",
+            "༼;´༎ຶ ۝ ༎ຶ༽ﾉ",
+        ]
+
+        function dateDiffInDays(a, b) {
+            const _MS_PER_DAY = 1000 * 60 * 60 * 24;
+            // Discard the time and time-zone information.
+            const utc1 = Date.UTC(a.getFullYear(), a.getMonth(), a.getDate());
+            const utc2 = Date.UTC(b.getFullYear(), b.getMonth(), b.getDate());
+
+            return Math.floor((utc2 - utc1) / _MS_PER_DAY);
+        }
+
+        function setDays() {
+            const theSaddestDayInTheHistoryOfDays = new Date("Tue, 28 Feb 2023 07:40:24 GMT")
+            const today = new Date()
+            const daysSince = dateDiffInDays(theSaddestDayInTheHistoryOfDays, today)
+            const quintifiedText = daysSince === 1 ? "day" : "days";
+
+            const timerContainer = document.getElementById("time")
+
+            timerContainer.innerHTML = `${daysSince} ${quintifiedText}`;
+        }
+
+        function setAscii() {
+            const elem = document.getElementById("face");
+
+            const oldIndex = Number(elem.getAttribute("data-index")) || 0;
+            const oldFace = isNaN(oldIndex) ? "&nbsp" : faces[oldIndex];
+
+            let index = oldIndex + 1 >= faces.length ? 0 : oldIndex + 1;
+            const face = faces[index]
+
+            const [upper, lower] = elem.classList.contains("toggle-anim") ? [face, oldFace] : [oldFace, face]
+
+            console.log({oldIndex, oldFace, index, face, upper, lower})
+
+            elem.innerHTML = upper;
+            elem.setAttribute("data-hover", lower)
+
+            elem.setAttribute("data-index", index)
+
+            elem.classList.toggle("toggle-anim")
+
+            setTimeout(setAscii, 4000)
+        }
+
+        window.addEventListener('load', function () {
+            setDays();
+            setAscii();
+        })
+    </script>
+</head>
+<body>
+<div class="container">
+    <div class="center">
+        <div class="inner"><span id="time"></span> <span id="face"></span></div>
+    </div>
+</div>
+</body>
+</html>
